@@ -54,18 +54,34 @@
 				options: [],
 				$container: $('#color-palette')
 			}
-
+      
 			// your rectangle gradient interaction goes in this function
 			// you may also add code outside of the function (e.g., global variables)
+      var path; 
 			function myGradientInteraction(){
+        
 				var tool = new paper.Tool();
-
+        var top; 
+        var bottom;
+        
 				tool.onMouseDown = function (event) {
-
+          top = event.point;
+          
+          var grad = {
+            gradient: {
+              stops: [cp.history.slice(-2)[0], cp.history.slice(-1)[0]]
+            },
+            origin:top,
+            destination:bottom
+          }
+          //fill color according to mouse event and stops
+          path.strokeColor = grad;
+          
+          path.fillColor = grad;
 				}
 
 				tool.onMouseUp = function (event) {
-					
+					bottom = event.point;
 				}
 			}
 
@@ -114,9 +130,32 @@
 				paper.setup(canvas);
 				getColorsCreatePalette();
 
+ 
 				paper.project.importSVG(mandala.filePath, function(item) { 
 					mandala.item = item._children["design-freepik"];
 				    paper.project.insertLayer(0,mandala.item);
+          
+                          // Create a Paper.js path to draw a triangle into it
+        path = new paper.Path();
+
+        // Add three points to the path
+        path.add(new paper.Point(290, 340));
+        path.add(new paper.Point(290, 390));
+        path.add(new paper.Point(440, 390));
+        path.add(new paper.Point(440, 340));
+
+
+        // Close the path
+        path.closed = true;
+
+        // Give the path a color and fill color
+        path.strokeColor = 'red';
+        path.strokeWidth = 5;
+        path.fillColor = 'red';
+
+        // Draw the path now
+        paper.view.draw();
+        
 
 				    if (custom) {
 				    	myCustomInteraction();	
@@ -125,6 +164,7 @@
 				    }		
 					
 				}); 
+        
 			}
 
 			// To see your myGradientInteraction version visit: 
